@@ -24,10 +24,10 @@ func InitRouter() *gin.Engine {
 
 	apiv1 := r.Group("/api/v1")
 	{
-		apiv1.GET("/Staffs", v1.GetStaffs)
-		apiv1.POST("/Staffs", v1.AddStaff)
-		apiv1.PUT("/Staffs/:id", v1.EditStaffs)
-		apiv1.DELETE("/Staffs/:id", v1.DeleteStaffs)
+		apiv1.GET("/staffs", v1.GetStaffs)
+		apiv1.POST("/staff", v1.AddStaff)
+		apiv1.PUT("/staffs/:id", v1.EditStaffs)
+		apiv1.DELETE("/staffs/:id", v1.DeleteStaffs)
 	}
 	return r
 }

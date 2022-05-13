@@ -36,7 +36,14 @@ func GetStaffs(c *gin.Context) {
 }
 
 func AddStaff(c *gin.Context) {
+	var staff = models.Staff{CreatedBy: "admin"}
+	c.ShouldBind(&staff)
+	models.AddStaff(staff)
 
+	c.JSON(http.StatusOK, gin.H{
+		"code": err.SUCCESS,
+		"msg":  err.GetMsg(err.SUCCESS),
+	})
 }
 
 func EditStaffs(c *gin.Context) {

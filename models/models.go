@@ -1,19 +1,21 @@
 package models
 
 import (
-	"go-blog-demo/pkg/setting"
-	"log"
+    "go-blog-demo/pkg/setting"
+    "log"
+    "time"
 
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
+    "gorm.io/driver/sqlite"
+    "gorm.io/gorm"
+    "gorm.io/gorm/schema"
 )
 
 var db *gorm.DB
 
 type Model struct {
-    ID         int `gorm:"primary_key" json:"id"`
-    CreatedOn  int `json:"created_on"`
-    ModifiedOn int `json:"modified_on"`
+    ID        uint `gorm:"primaryKey"`
+    CreatedAt time.Time
+    UpdatedAt time.Time
 }
 
 func init() {
@@ -29,7 +31,10 @@ func init() {
 
     sqlite_path = sec.Key("SQLITE_PATH").String()
 
-    db, err = gorm.Open(sqlite.Open(sqlite_path), &gorm.Config{})
+    db, err = gorm.Open(sqlite.Open(sqlite_path), &gorm.Config{
+        NamingStrategy: schema.NamingStrategy{
+            SingularTable: true,
+        }})
     if err != nil {
         log.Println(err)
     }
@@ -42,4 +47,5 @@ func init() {
     sqlDB.SetMaxIdleConns(10)
     sqlDB.SetMaxOpenConns(100)
     db.AutoMigrate(&Staff{})
+
 }

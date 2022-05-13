@@ -3,10 +3,10 @@ package models
 type Staff struct {
     Model
 
-    Name       string `json:"name"`
-    CreatedBy  string `json:"created_by"`
-    ModifiedBy string `json:"modified_by"`
-    State      int    `json:"state"`
+    Name      string `json:"name"`
+    CreatedBy string `json:"created_by"`
+    Introduce string `json:"introduce"`
+    Avatar    string `json:"avatar"`
 }
 
 func GetStaffs(pageNum int, pageSize int, maps interface{}) (Staffs []Staff) {
@@ -22,17 +22,10 @@ func GetStaffTotal(maps interface{}) (count int64) {
 func ExistStaffByName(name string) bool {
     var Staff Staff
     db.Select("id").Where("name = ?", name).First(&Staff)
-    if Staff.ID > 0 {
-        return true
-    }
-    return false
+    return Staff.ID > 0
 }
 
-func AddStaff(name string, state int, createdBy string) bool {
-    db.Create(&Staff{
-        Name:      name,
-        State:     state,
-        CreatedBy: createdBy,
-    })
+func AddStaff(s Staff) bool {
+    db.Create(&s)
     return true
 }
