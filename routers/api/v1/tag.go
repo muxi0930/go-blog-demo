@@ -1,8 +1,9 @@
 package v1
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 
 	//"github.com/astaxie/beego/validation"
 	"github.com/unknwon/com"
@@ -13,7 +14,7 @@ import (
 	"go-blog-demo/pkg/util"
 )
 
-func GetTags(c *gin.Context) {
+func GetStaffs(c *gin.Context) {
 	maps := make(map[string]interface{})
 	data := make(map[string]interface{})
 
@@ -24,8 +25,8 @@ func GetTags(c *gin.Context) {
 		maps["state"] = com.StrTo(arg).MustInt()
 	}
 
-	data["lists"] = models.GetTags(util.GetPage(c), setting.PageSize, maps)
-	data["total"] = models.GetTagTotal(maps)
+	data["lists"] = models.GetStaffs(util.GetPage(c), setting.PageSize, maps)
+	data["total"] = models.GetStaffTotal(maps)
 
 	c.JSON(http.StatusOK, gin.H{
 		"code": err.SUCCESS,
@@ -34,14 +35,14 @@ func GetTags(c *gin.Context) {
 	})
 }
 
-func AddTag(c *gin.Context) {
+func AddStaff(c *gin.Context) {
 
 }
 
-func EditTags(c *gin.Context) {
+func EditStaffs(c *gin.Context) {
 
 }
 
-func DeleteTags(c *gin.Context) {
+func DeleteStaffs(c *gin.Context) {
 
 }

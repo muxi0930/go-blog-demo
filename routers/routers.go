@@ -1,9 +1,11 @@
 package routers
 
 import (
-	"github.com/gin-gonic/gin"
 	"go-blog-demo/pkg/setting"
-	"go-blog-demo/routers/api/v1"
+	v1 "go-blog-demo/routers/api/v1"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func InitRouter() *gin.Engine {
@@ -13,16 +15,19 @@ func InitRouter() *gin.Engine {
 
 	gin.SetMode(setting.RunMode)
 
+	r.StaticFS("/files", http.Dir("."))
+	r.Static("/web", "./static")
+
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{"message": "pong"})
 	})
 
 	apiv1 := r.Group("/api/v1")
 	{
-		apiv1.GET("/tags", v1.GetTags)
-		apiv1.POST("/tags", v1.AddTag)
-		apiv1.PUT("/tags/:id", v1.EditTags)
-		apiv1.DELETE("/tags/:id", v1.DeleteTags)
+		apiv1.GET("/Staffs", v1.GetStaffs)
+		apiv1.POST("/Staffs", v1.AddStaff)
+		apiv1.PUT("/Staffs/:id", v1.EditStaffs)
+		apiv1.DELETE("/Staffs/:id", v1.DeleteStaffs)
 	}
 	return r
 }
