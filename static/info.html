@@ -12,92 +12,100 @@
 <body>
 
     <img id='avatar_img' style="width: 100%;height: 100%;" src="" />
-    <div class="layui-form">
-        <table class="layui-table">
-            <colgroup>
-                <col width="150">
-                <col width="150">
-                <col width="200">
-                <col>
-            </colgroup>
-            <thead>
-                <tr>
-                    <th>人物</th>
-                    <th>民族</th>
-                    <th>出场时间</th>
-                    <th>格言</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>贤心</td>
-                    <td>汉族</td>
-                    <td>1989-10-14</td>
-                    <td>人生似修行</td>
-                </tr>
-                <tr>
-                    <td>张爱玲</td>
-                    <td>汉族</td>
-                    <td>1920-09-30</td>
-                    <td>于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…</td>
-                </tr>
-                <tr>
-                    <td>Helen Keller</td>
-                    <td>拉丁美裔</td>
-                    <td>1880-06-27</td>
-                    <td> Life is either a daring adventure or nothing.</td>
-                </tr>
-                <tr>
-                    <td>岳飞</td>
-                    <td>汉族</td>
-                    <td>1103-北宋崇宁二年</td>
-                    <td>教科书再滥改，也抹不去“民族英雄”的事实</td>
-                </tr>
-                <tr>
-                    <td>孟子</td>
-                    <td>华夏族（汉族）</td>
-                    <td>公元前-372年</td>
-                    <td>猿强，则国强。国强，则猿更强！ </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    <!-- <table class="layui-hide" id="user_table" , lay-filter="table_lay_filter"></table> -->
+
+    <form class="layui-form" action="" style="padding-right: 20px;">
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <img class="layui-upload-img" id="demo1" style="width: 60%;">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">姓名：</label>
+            <label class="layui-form-label" id="name_label" style="text-align:left">null</label>
+
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">性别：</label>
+            <label class="layui-form-label" id="sex_label" style="text-align:left">null</label>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label ">人物介绍：</label>
+            <div class="layui-input-block">
+                <textarea name="introduce" placeholder="" class="layui-textarea" id="intro_label">null</textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item ">
+            <label class="layui-form-label">证书：</label>
+            <label class="layui-btn layui-btn-primary" id="certificate_btn" style="text-align:left">无证书</label>
+        </div>
+    </form>
 
     <script src="layui/layui.js"></script>
     <script>
         var $ = layui.$
+        var certificate_path = "";
         layui.use(function () {
             var layer = layui.layer
                 , form = layui.form
                 , laypage = layui.laypage
                 , element = layui.element
                 , laydate = layui.laydate
-                , util = layui.util;
+                , util = layui.util
+                , table = layui.table;
 
-            //输出版本号
-            lay('#version').html(layui.v);
-        });
-        img_data = "";
-        let params = {};
-        let url = location.search; //获取url中"?"符后的字串
-        if (url.length > 0) { //判断是否携带参数
-            if (url.indexOf('?') != -1) {
-                this.isShwoInput = true;
-                let str = url.substr(url.indexOf('?') + 1);
-                let strs = str.split('&');
-                for (let i = 0; i < strs.length; i++) {
-                    params[strs[i].split('=')[0]] = decodeURI(strs[i].split('=')[1]);
+            img_data = "";
+            let params = {};
+            let url = location.search; //获取url中"?"符后的字串
+            if (url.length > 0) { //判断是否携带参数
+                if (url.indexOf('?') != -1) {
+                    this.isShwoInput = true;
+                    let str = url.substr(url.indexOf('?') + 1);
+                    let strs = str.split('&');
+                    for (let i = 0; i < strs.length; i++) {
+                        params[strs[i].split('=')[0]] = decodeURI(strs[i].split('=')[1]);
+                    }
                 }
             }
-        }
-        axios.get('/api/v1/staffs?id=' + params.id)
-            .then(function (response) {
-                console.log(response);
-                if (response.data.count > 0) {
-                    img_data = response.data.data[0].avatar;
-                    $('#avatar_img').attr('src', img_data);
-                }
+            axios.get('/api/v1/staffs?id=' + params.id)
+                .then(function (response) {
+                    console.log(response);
+                    if (response.data.count > 0) {
+                        img_data = response.data.data[0].avatar;
+                        $('#avatar_img').attr('src', img_data);
+                        $('#name_label').text(response.data.data[0].name);
+                        $('#intro_label').text(response.data.data[0].introduce);
+                        $('#sex_label').text(response.data.data[0].sex);
+                        if (response.data.data[0].certificate != '') {
+                            // 获取链接下载
+                            certificate_path = response.data.data[0].certificate;
+                            $('#certificate_btn').html("点击下载");
+                        }
+                        else {
+                            certificate_path = ""
+                            $('#certificate_btn').css("border", "none")
+                        }
+                    }
+                })
+                .catch(function (error) { console.log(error); })
+
+            //certificate_btn 按钮点击后下载证书
+            $('#certificate_btn').click(function () {
+                if (certificate_path == ""){ return }
+                var oA = document.createElement("a");
+                file_name = certificate_path.split("/")
+                file_name = file_name[file_name.length - 1]
+                file_name = file_name.substr(0, file_name.length-11)
+                // console.log('download:' + certificate_path)
+                oA.download = file_name
+                oA.href = certificate_path
+                oA.click();
+                oA.remove();
             })
-            .catch(function (error) { console.log(error); })
+
+        });
+
     </script>
 </body>
