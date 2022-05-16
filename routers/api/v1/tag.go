@@ -52,11 +52,25 @@ func AddStaff(c *gin.Context) {
 }
 
 func EditStaffs(c *gin.Context) {
+	var staff = models.Staff{CreatedBy: "admin"}
+	id := com.StrTo(c.Param("id")).MustInt()
+	c.ShouldBind(&staff)
+	staff.ID = uint(id)
+	models.UpdateStaff(staff)
 
+	c.JSON(http.StatusOK, gin.H{
+		"code": err.SUCCESS,
+		"msg":  err.GetMsg(err.SUCCESS),
+	})
 }
 
 func DeleteStaffs(c *gin.Context) {
-
+	id := com.StrTo(c.Param("id")).MustInt()
+	models.DeleteStaff(id)
+	c.JSON(http.StatusOK, gin.H{
+		"code": err.SUCCESS,
+		"msg":  err.GetMsg(err.SUCCESS),
+	})
 }
 
 // 接受上传图片接口

@@ -10,13 +10,12 @@
 
 
 <body>
-    <form class="layui-form" action="" style="padding-right: 20px;">
-
+    <form class="layui-form" action="" style="padding-right: 20px;" lay-filter="example">
         <div class="layui-form-item">
-            <label class="layui-form-label">照片*</label>
+            <label class="layui-form-label">照片：</label>
             <div class="layui-input-block">
                 <div class="layui-upload-list">
-                    <img class="layui-upload-img" id="demo1" style="width:200px; height:50%;">
+                    <img id='avatar_img' style="width:200px; height:50%;" src="" />
                 </div>
             </div>
             <div class="layui-input-block">
@@ -28,8 +27,8 @@
         <div class="layui-form-item">
             <label class="layui-form-label">姓名*</label>
             <div class="layui-input-block">
-                <input type="text" name="name" required lay-verify="required" placeholder="请输入姓名" autocomplete="off"
-                    class="layui-input">
+                <input id="name_label" type="text" name="name" required lay-verify="required" placeholder="请输入姓名"
+                    autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
@@ -49,7 +48,7 @@
         <div class="layui-form-item ">
             <label class="layui-form-label">证书</label>
             <button type="button" class="layui-btn layui-btn-primary layui-btn-sm layui-border-black"
-                id="test2">上传证书</button>
+                id="test2">重新上传证书</button>
             <label class="layui-form-label" id="certificate_label">未上传证书</label>
         </div>
 
@@ -57,7 +56,7 @@
         <div class="layui-form-item" style="margin-top:20px">
             <div class="layui-input-block">
                 <button class="layui-btn" lay-submit lay-filter="form_user" , id="commit_btn">立即提交</button>
-                <button class="layui-btn layui-btn-primary", id="reset_btn">取消</button>
+                <button class="layui-btn layui-btn-primary" , id="reset_btn">取消</button>
             </div>
         </div>
     </form>
@@ -77,6 +76,45 @@
                 , util = layui.util
                 , upload = layui.upload;
 
+            // 获取当前数据
+            img_data = "";
+            let params = {};
+            let url = location.search; //获取url中"?"符后的字串
+            if (url.length > 0) { //判断是否携带参数
+                if (url.indexOf('?') != -1) {
+                    this.isShwoInput = true;
+                    let str = url.substr(url.indexOf('?') + 1);
+                    let strs = str.split('&');
+                    for (let i = 0; i < strs.length; i++) {
+                        params[strs[i].split('=')[0]] = decodeURI(strs[i].split('=')[1]);
+                    }
+                }
+            }
+            axios.get('/api/v1/staffs?id=' + params.id)
+                .then(function (response) {
+                    console.log(response);
+                    if (response.data.count > 0) {
+                        img_data = response.data.data[0].avatar;
+                        $('#avatar_img').attr('src', img_data);
+                        form.val('example', {
+                            "name": response.data.data[0].name
+                            , "sex": response.data.data[0].sex
+                            , "introduce": response.data.data[0].introduce
+                        });
+                        $('#name_label').text(response.data.data[0].name);
+                        $('#intro_label').text(response.data.data[0].introduce);
+                        $('#sex_label').text(response.data.data[0].sex);
+                        if (response.data.data[0].certificate != '') {
+                            $('#certificate_label').html("已上传").css('color', 'green');
+                        }
+                        image_path = response.data.data[0].avatar;
+                        certificate_path = response.data.data[0].certificate;
+                    }
+                })
+                .catch(function (error) { console.log(error); })
+
+
+
             form.on('submit(form_user)', function (data) {
                 if (image_path == '') {
                     layer.msg('请上传照片', { icon: 5 })
@@ -87,17 +125,17 @@
                 _field['avatar'] = image_path;
                 _field['certificate'] = certificate_path;
                 console.log(_field)
-                axios.post('/api/v1/staff', data.field)
+                axios.put('/api/v1/staff/' + params.id, data.field)
                     .then(function (response) {
                         // console.log(response);
                         if (response.data.code == 200) {
-                            layer.msg('添加成功', { time: 1500 }, function () {
+                            layer.msg('修改成功', { time: 1500 }, function () {
                                 window.parent.location.reload();
                                 var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
                                 parent.layer.close(index);
                             });
                         } else {
-                            layer.msg('添加失败');
+                            layer.msg('修改失败');
                         }
                     })
                     .catch(function (error) {
@@ -114,7 +152,7 @@
                 , size: 10240
                 , before: function (obj) {
                     obj.preview(function (index, file, result) {
-                        $('#demo1').attr('src', result); //图片链接（base64）
+                        $('#avatar_img').attr('src', result); 
                     });
                 }
                 , done: function (res) {
@@ -151,7 +189,9 @@
             lay('#reset_btn').on('click', function () {
                 var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
                 parent.layer.close(index);
-			});
+            });
+
+
         });
     </script>
 </body>

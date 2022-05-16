@@ -31,3 +31,13 @@ func AddStaff(s Staff) bool {
     db.Create(&s)
     return true
 }
+
+func DeleteStaff(id int) bool {
+    db.Where("id = ?", id).Delete(&Staff{})
+    return true
+}
+
+func UpdateStaff(s Staff) bool {
+    db.Save(&s)
+    return true
+}

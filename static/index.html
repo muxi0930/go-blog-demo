@@ -16,7 +16,7 @@
 			<legend>👴老头乐👴</legend>
 
 		</fieldset>
-		<button class="layui-btn layui-btn-primary layui-border-black" style="float:right" id="add_user">添加老头👴</button>
+		<button class="layui-btn layui-btn-primary layui-border-green" style="float:right" id="add_user">添加老头👴</button>
 		<div class="layui-row">
 			<div class="layui-col-xs12 layui-col-md8">
 				<table class="layui-hide" id="user_table" , lay-filter="table_lay_filter"></table>
@@ -32,6 +32,13 @@
 
 	<!-- 引入 layui.js 的 <script> 标签最好放置在 html 末尾 -->
 	<script src="layui/layui.js"></script>
+	<script type="text/html" id="barDemo">
+		<a class="layui-btn layui-btn-xs" lay-event="check" >查看</a>
+		<!-- <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a> -->
+		<!-- <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a> -->
+		<button type="button" class="layui-btn layui-btn-xs " lay-event="edit"><i class="layui-icon"></i></button>
+  		<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del"><i class="layui-icon"></i></button>
+	  </script>
 	<script>
 		layui.use(function () {
 			var layer = layui.layer
@@ -43,57 +50,6 @@
 
 			//欢迎信息
 			layer.msg('Hello World');
-
-			//输出版本号
-			lay('#version').html(layui.v);
-
-			//日期
-			laydate.render({
-				elem: '#test2'
-				, value: new Date()
-				, isInitValue: true
-			});
-
-			//触发事件
-			util.event('test-active', {
-				'test-form': function () {
-					layer.open({
-						type: 1
-						, resize: false
-						, shadeClose: true
-						, area: '350px'
-						, title: 'layer + form'
-						, content: ['<ul class="layui-form layui-form-pane" style="margin: 15px;">'
-							, '<li class="layui-form-item">'
-							, '<label class="layui-form-label">输入框</label>'
-							, '<div class="layui-input-block">'
-							, '<input class="layui-input" lay-verify="required" name="field1">'
-							, '</div>'
-							, '</li>'
-							, '<li class="layui-form-item">'
-							, '<label class="layui-form-label">选择框</label>'
-							, '<div class="layui-input-block">'
-							, '<select name="field2">'
-							, '<option value="A">A</option>'
-							, '<option value="B">B</option>'
-							, '<select>'
-							, '</div>'
-							, '</li>'
-							, '<li class="layui-form-item" style="text-align:center;">'
-							, '<button type="submit" lay-submit lay-filter="*" class="layui-btn">提交</button>'
-							, '</li>'
-							, '</ul>'].join('')
-						, success: function (layero, index) {
-							layero.find('.layui-layer-content').css('overflow', 'visible');
-
-							form.render().on('submit(*)', function (data) {
-								layer.msg(JSON.stringify(data.field), { icon: 1 });
-								//layer.close(index); //关闭层
-							});
-						}
-					});
-				}
-			});
 		});
 		layui.use('table', function () {
 			var $ = layui.$
@@ -107,28 +63,58 @@
 					, groups: 1 //只显示 1 个连续页码
 					, first: false //不显示首页
 					, last: false //不显示尾页
-
 				}
 				, cols: [[
-					{ field: 'ID', width: 80, title: 'ID'}
+					{ field: 'ID', width: 60, title: '序号' }
 					, { field: 'name', title: '姓名' }
-					, { field: 'sex', width: 80, title: '性别', sort: true }
+					, { field: 'sex', width: 60, title: '性别' }
+					, { fixed: 'right', title: '操作', width: 160, toolbar: '#barDemo' }
 				]]
 			});
-			// 行事件
-			table.on('row(table_lay_filter)', function (obj) {
-				layer.open({
-					title: '老头介绍'
-					, type: 2
-					, content: 'info.html?id=' + obj.data.ID
-					, area: ['', '400px']
-				});
 
-				//标注选中样式
-				obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
-				// console.log(obj.tr) //得到当前行元素对象
-				// console.log(obj.data) //得到当前行数据
-				//obj.update(fields) //修改当前行数据
+			// 监听行工具事件
+			table.on('tool(table_lay_filter)', function (obj) {
+				var data = obj.data;
+				// console.log(obj)
+				if (obj.event === 'check') {
+					layer.open({
+						title: '老头介绍'
+						, type: 2
+						, content: 'info.html?id=' + obj.data.ID
+						, area: ['100%', '500px']
+					});
+					//标注选中样式
+					obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+				} else if (obj.event === 'del') {
+					layer.confirm('真的要删除吗？', function (index) {
+						axios.delete('/api/v1/staff/' + data.ID)
+							.then(function (response) {
+								if (response.data.code == 200) {
+									layer.msg('删除成功', { time: 1000 }, function () {
+										window.parent.location.reload();
+										var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+										parent.layer.close(index);
+									});
+								} else {
+									layer.msg('删除失败！', { time: 1000 }, function () {
+										window.parent.location.reload();
+										var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+										parent.layer.close(index);
+									});
+								}
+							})
+							.catch(function (error) {
+								console.log(error);
+							});
+					});
+				} else if (obj.event === 'edit') {
+					layer.open({
+						title: '编辑老头'
+						, type: 2
+						, content: 'update.html?id=' + obj.data.ID
+						, area: ['100%', '500px']
+					});
+				}
 			});
 
 			//add_user按钮跳转事件

@@ -11,16 +11,18 @@
 
 <body>
 
-    <img id='avatar_img' style="width: 100%;height: 100%;" src="" />
+    
     <!-- <table class="layui-hide" id="user_table" , lay-filter="table_lay_filter"></table> -->
 
     <form class="layui-form" action="" style="padding-right: 20px;">
         <div class="layui-form-item">
+            <label class="layui-form-label">照片：</label>
             <div class="layui-input-block">
-                <img class="layui-upload-img" id="demo1" style="width: 60%;">
+                <div class="layui-upload-list">
+                    <img id='avatar_img' style="width:200px; height:50%;" src="" />
+                </div>
             </div>
         </div>
-
         <div class="layui-form-item">
             <label class="layui-form-label">姓名：</label>
             <label class="layui-form-label" id="name_label" style="text-align:left">null</label>
@@ -31,7 +33,7 @@
             <label class="layui-form-label" id="sex_label" style="text-align:left">null</label>
         </div>
         <div class="layui-form-item layui-form-text">
-            <label class="layui-form-label ">人物介绍：</label>
+            <label class="layui-form-label ">介绍：</label>
             <div class="layui-input-block">
                 <textarea name="introduce" placeholder="" class="layui-textarea" id="intro_label">null</textarea>
             </div>
@@ -93,11 +95,11 @@
 
             //certificate_btn 按钮点击后下载证书
             $('#certificate_btn').click(function () {
-                if (certificate_path == ""){ return }
+                if (certificate_path == "") { return }
                 var oA = document.createElement("a");
                 file_name = certificate_path.split("/")
                 file_name = file_name[file_name.length - 1]
-                file_name = file_name.substr(0, file_name.length-11)
+                file_name = file_name.substr(0, file_name.length - 11)
                 // console.log('download:' + certificate_path)
                 oA.download = file_name
                 oA.href = certificate_path

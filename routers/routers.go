@@ -26,8 +26,8 @@ func InitRouter() *gin.Engine {
 	{
 		apiv1.GET("/staffs", v1.GetStaffs)
 		apiv1.POST("/staff", v1.AddStaff)
-		apiv1.PUT("/staffs/:id", v1.EditStaffs)
-		apiv1.DELETE("/staffs/:id", v1.DeleteStaffs)
+		apiv1.PUT("/staff/:id", v1.EditStaffs)
+		apiv1.DELETE("/staff/:id", v1.DeleteStaffs)
 		apiv1.POST("/upload_header", v1.UploadHeader)
 		apiv1.POST("/upload_certificate", v1.UploadCertificate)
 	}
