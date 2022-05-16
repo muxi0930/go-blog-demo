@@ -3,10 +3,12 @@ package models
 type Staff struct {
     Model
 
-    Name      string `json:"name"`
-    CreatedBy string `json:"created_by"`
-    Introduce string `json:"introduce"`
-    Avatar    string `json:"avatar"`
+    Name        string `json:"name"`
+    CreatedBy   string `json:"created_by"`
+    Introduce   string `json:"introduce"`
+    Avatar      string `json:"avatar"`
+    Sex         string `json:"sex"`
+    Certificate string `json:"certificate"`
 }
 
 func GetStaffs(pageNum int, pageSize int, maps interface{}) (Staffs []Staff) {

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <script src="layui/axios.min.js"></script>
+</head>
+
+
+<body>
+    <form class="layui-form" action="" style="padding-right: 20px;">
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <div class="layui-upload-list">
+                    <img class="layui-upload-img" id="demo1" style="width: 60%;">
+                    <p id="demoText"></p>
+                </div>
+            </div>
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn" id="test1">上传图片</button>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">姓名</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" required lay-verify="required" placeholder="请输入姓名" autocomplete="off"
+                    class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">性别</label>
+            <div class="layui-input-block">
+                <input type="radio" name="sex" value="男" title="男" checked>
+                <input type="radio" name="sex" value="女" title="女">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">人物介绍</label>
+            <div class="layui-input-block">
+                <textarea name="introduce" placeholder="请输入人物介绍" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="form_user">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+
+
+    <script src="layui/layui.js"></script>
+    <script>
+        var $ = layui.$
+        var image_path = '';
+        var certificate_path = '';
+        layui.use(function () {
+            var layer = layui.layer
+                , form = layui.form
+                , laypage = layui.laypage
+                , element = layui.element
+                , laydate = layui.laydate
+                , util = layui.util
+                , upload = layui.upload;
+
+            form.on('submit(form_user)', function (data) {
+                if (image_path == '') {
+                    layer.msg('请上传头像', { icon: 5 })
+                    return false
+                }
+                var _field = data.field
+                _field['avatar'] = image_path;
+                console.log(_field)
+
+                axios.post('/api/v1/staff', data.field)
+                    .then(function (response) {
+                        // console.log(response);
+                        if (response.data.code == 200) {
+                            layer.msg('添加成功', {time: 1500}, function () {
+                                window.parent.location.reload();
+                                var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                                parent.layer.close(index);
+                            });
+                        } else {
+                            layer.msg('添加失败');
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+                return false;
+            });
+
+            //头像上传
+            upload.render({
+                elem: '#test1'
+                , url: '/api/v1/upload_header'
+                , accept: 'images'
+                , size: 10240
+                , before: function (obj) {
+                    obj.preview(function (index, file, result) {
+                        $('#demo1').attr('src', result); //图片链接（base64）
+                    });
+                }
+                , done: function (res) {
+                    image_path = res.data;
+                }
+                , error: function () {
+                    layui.msg('图片上传失败！');
+                    image_path = '';
+                }
+            });
+
+            //证书上传
+            upload.render({
+                elem: '#test1'
+                , url: '/api/v1/upload_certificate'
+                , accept: 'file'
+                , acceptMime: 'file/doc,file/docx,file/pdf'
+                , size: 10240
+                , before: function (obj) {
+                }
+                , done: function (res) {
+                    certificate_path = res.data;
+                }
+                , error: function () {
+                    layui.msg('证书上传失败！');
+                    certificate_path = '';
+                }
+            });
+        });
+    </script>
+</body>

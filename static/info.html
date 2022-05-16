@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <script src="layui/axios.min.js"></script>
+</head>
+
+
+<body>
+
+    <img id='avatar_img' style="width: 100%;height: 100%;" src="" />
+    <div class="layui-form">
+        <table class="layui-table">
+            <colgroup>
+                <col width="150">
+                <col width="150">
+                <col width="200">
+                <col>
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>人物</th>
+                    <th>民族</th>
+                    <th>出场时间</th>
+                    <th>格言</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>贤心</td>
+                    <td>汉族</td>
+                    <td>1989-10-14</td>
+                    <td>人生似修行</td>
+                </tr>
+                <tr>
+                    <td>张爱玲</td>
+                    <td>汉族</td>
+                    <td>1920-09-30</td>
+                    <td>于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…</td>
+                </tr>
+                <tr>
+                    <td>Helen Keller</td>
+                    <td>拉丁美裔</td>
+                    <td>1880-06-27</td>
+                    <td> Life is either a daring adventure or nothing.</td>
+                </tr>
+                <tr>
+                    <td>岳飞</td>
+                    <td>汉族</td>
+                    <td>1103-北宋崇宁二年</td>
+                    <td>教科书再滥改，也抹不去“民族英雄”的事实</td>
+                </tr>
+                <tr>
+                    <td>孟子</td>
+                    <td>华夏族（汉族）</td>
+                    <td>公元前-372年</td>
+                    <td>猿强，则国强。国强，则猿更强！ </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="layui/layui.js"></script>
+    <script>
+        var $ = layui.$
+        layui.use(function () {
+            var layer = layui.layer
+                , form = layui.form
+                , laypage = layui.laypage
+                , element = layui.element
+                , laydate = layui.laydate
+                , util = layui.util;
+
+            //输出版本号
+            lay('#version').html(layui.v);
+        });
+        img_data = "";
+        let params = {};
+        let url = location.search; //获取url中"?"符后的字串
+        if (url.length > 0) { //判断是否携带参数
+            if (url.indexOf('?') != -1) {
+                this.isShwoInput = true;
+                let str = url.substr(url.indexOf('?') + 1);
+                let strs = str.split('&');
+                for (let i = 0; i < strs.length; i++) {
+                    params[strs[i].split('=')[0]] = decodeURI(strs[i].split('=')[1]);
+                }
+            }
+        }
+        axios.get('/api/v1/staffs?id=' + params.id)
+            .then(function (response) {
+                console.log(response);
+                if (response.data.count > 0) {
+                    img_data = response.data.data[0].avatar;
+                    $('#avatar_img').attr('src', img_data);
+                }
+            })
+            .catch(function (error) { console.log(error); })
+    </script>
+</body>

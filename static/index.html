@@ -1,102 +1,148 @@
-
 <!DOCTYPE html>
 <html>
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <title>测试 - layui</title>
-  <link rel="stylesheet" href="layui/css/layui.css">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<title>测试 - layui</title>
+	<link rel="stylesheet" href="layui/css/layui.css">
+	<script src="layui/axios.min.js"></script>
 </head>
+
 <body>
 
-<div class="layui-container">
-  <div class="layui-progress" style="margin: 15px 0 30px;">
-	<div class="layui-progress-bar" lay-percent="100%"></div>
-  </div>
-  
-  
-  <div class="layui-btn-container">
-	<button class="layui-btn" test-active="test-form">一个按钮</button>
-	<button class="layui-btn layui-btn-normal" id="test2">当前日期</button>
-  </div>
-  
-  <blockquote class="layui-elem-quote" style="margin-top: 30px;">
-	<div class="layui-text">
-	  <ul>
-		<li>你当前预览的是：<span>layui-v<span id="version"></span></span></li>
-		<li>layui 是一套开源的 Web UI（界面）组件库。这是一个极其简洁的演示页面</li>
-	  </ul>
+	<div class="layui-container" style="margin: 30px 0 30px;">
+		<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+			<legend>👴老头乐👴</legend>
+
+		</fieldset>
+		<button class="layui-btn layui-btn-primary layui-border-black" style="float:right" id="add_user">添加老头👴</button>
+		<div class="layui-row">
+			<div class="layui-col-xs12 layui-col-md8">
+				<table class="layui-hide" id="user_table" , lay-filter="table_lay_filter"></table>
+			</div>
+			<div class="layui-col-xs6 layui-col-md4">
+				<!-- <div class="layui-panel">
+					<div style="padding: 50px 30px;">
+					</div>
+				</div> -->
+			</div>
+		</div>
 	</div>
-  </blockquote>
-</div>
 
+	<!-- 引入 layui.js 的 <script> 标签最好放置在 html 末尾 -->
+	<script src="layui/layui.js"></script>
+	<script>
+		layui.use(function () {
+			var layer = layui.layer
+				, form = layui.form
+				, laypage = layui.laypage
+				, element = layui.element
+				, laydate = layui.laydate
+				, util = layui.util;
 
+			//欢迎信息
+			layer.msg('Hello World');
 
-<!-- 引入 layui.js 的 <script> 标签最好放置在 html 末尾 -->
-<script src="layui/layui.js"></script>
-<script>
-layui.use(function(){
-  var layer = layui.layer
-  ,form = layui.form
-  ,laypage = layui.laypage
-  ,element = layui.element
-  ,laydate = layui.laydate
-  ,util = layui.util;
-  
-  //欢迎信息
-  layer.msg('Hello World');
-  
-  //输出版本号
-  lay('#version').html(layui.v);
-  
-  //日期
-  laydate.render({
-	elem: '#test2'
-	,value: new Date()
-	,isInitValue: true
-  });
-  
-  //触发事件
-  util.event('test-active', {
-	'test-form': function(){
-	  layer.open({
-		type: 1
-		,resize: false
-		,shadeClose: true
-		,area: '350px'
-		,title: 'layer + form'
-		,content: ['<ul class="layui-form layui-form-pane" style="margin: 15px;">'
-		  ,'<li class="layui-form-item">'
-			,'<label class="layui-form-label">输入框</label>'
-			,'<div class="layui-input-block">'
-			  ,'<input class="layui-input" lay-verify="required" name="field1">'
-			,'</div>'
-		  ,'</li>'
-		  ,'<li class="layui-form-item">'
-			,'<label class="layui-form-label">选择框</label>'
-			,'<div class="layui-input-block">'
-			  ,'<select name="field2">'
-				,'<option value="A">A</option>'
-				,'<option value="B">B</option>'
-			  ,'<select>'
-			,'</div>'
-		  ,'</li>'
-		  ,'<li class="layui-form-item" style="text-align:center;">'
-			,'<button type="submit" lay-submit lay-filter="*" class="layui-btn">提交</button>'
-		  ,'</li>'
-		,'</ul>'].join('')
-		,success: function(layero, index){
-		  layero.find('.layui-layer-content').css('overflow', 'visible');
-		  
-		  form.render().on('submit(*)', function(data){
-			layer.msg(JSON.stringify(data.field), {icon: 1});
-			//layer.close(index); //关闭层
-		  });
-		}
-	  });
-	}
-  });
-});
-</script>
+			//输出版本号
+			lay('#version').html(layui.v);
+
+			//日期
+			laydate.render({
+				elem: '#test2'
+				, value: new Date()
+				, isInitValue: true
+			});
+
+			//触发事件
+			util.event('test-active', {
+				'test-form': function () {
+					layer.open({
+						type: 1
+						, resize: false
+						, shadeClose: true
+						, area: '350px'
+						, title: 'layer + form'
+						, content: ['<ul class="layui-form layui-form-pane" style="margin: 15px;">'
+							, '<li class="layui-form-item">'
+							, '<label class="layui-form-label">输入框</label>'
+							, '<div class="layui-input-block">'
+							, '<input class="layui-input" lay-verify="required" name="field1">'
+							, '</div>'
+							, '</li>'
+							, '<li class="layui-form-item">'
+							, '<label class="layui-form-label">选择框</label>'
+							, '<div class="layui-input-block">'
+							, '<select name="field2">'
+							, '<option value="A">A</option>'
+							, '<option value="B">B</option>'
+							, '<select>'
+							, '</div>'
+							, '</li>'
+							, '<li class="layui-form-item" style="text-align:center;">'
+							, '<button type="submit" lay-submit lay-filter="*" class="layui-btn">提交</button>'
+							, '</li>'
+							, '</ul>'].join('')
+						, success: function (layero, index) {
+							layero.find('.layui-layer-content').css('overflow', 'visible');
+
+							form.render().on('submit(*)', function (data) {
+								layer.msg(JSON.stringify(data.field), { icon: 1 });
+								//layer.close(index); //关闭层
+							});
+						}
+					});
+				}
+			});
+		});
+		layui.use('table', function () {
+			var $ = layui.$
+			var table = layui.table;
+			table.render({
+				elem: '#user_table'
+				, url: '/api/v1/staffs'
+				, page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+					layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
+					//,curr: 5 //设定初始在第 5 页
+					, groups: 1 //只显示 1 个连续页码
+					, first: false //不显示首页
+					, last: false //不显示尾页
+
+				}
+				, cols: [[
+					{ field: 'ID', width: 80, title: 'ID', sort: true }
+					, { field: 'name', width: 100, title: '用户名' }
+					, { field: 'sex', width: 80, title: '性别', sort: true }
+					, { field: 'introduce', title: '介绍' }
+				]]
+			});
+			// 行事件
+			table.on('row(table_lay_filter)', function (obj) {
+				layer.open({
+					title: '老头介绍'
+					, type: 2
+					, content: 'info.html?id=' + obj.data.ID
+					, area: ['', '400px']
+				});
+
+				//标注选中样式
+				obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+				// console.log(obj.tr) //得到当前行元素对象
+				// console.log(obj.data) //得到当前行数据
+				//obj.update(fields) //修改当前行数据
+			});
+
+			//add_user按钮跳转事件
+			lay('#add_user').on('click', function () {
+				layer.open({
+					title: '添加老头'
+					, type: 2
+					, content: 'create.html'
+					, area: ['100%', '500px']
+				});
+			});
+		});
+	</script>
 </body>
+
 </html>

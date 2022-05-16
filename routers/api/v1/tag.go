@@ -1,7 +1,10 @@
 package v1
 
 import (
+	"log"
 	"net/http"
+	"path"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -10,14 +13,15 @@ import (
 
 	"go-blog-demo/models"
 	"go-blog-demo/pkg/err"
-	"go-blog-demo/pkg/setting"
 	"go-blog-demo/pkg/util"
 )
 
 func GetStaffs(c *gin.Context) {
 	maps := make(map[string]interface{})
-	data := make(map[string]interface{})
-
+	// data := make(map[string]interface{})
+	if id := c.Query("id"); id != "" {
+		maps["id"] = id
+	}
 	if name := c.Query("name"); name != "" {
 		maps["name"] = name
 	}
@@ -25,13 +29,14 @@ func GetStaffs(c *gin.Context) {
 		maps["state"] = com.StrTo(arg).MustInt()
 	}
 
-	data["lists"] = models.GetStaffs(util.GetPage(c), setting.PageSize, maps)
-	data["total"] = models.GetStaffTotal(maps)
+	lists := models.GetStaffs(util.GetPage(c), util.GetLimit(c), maps)
+	total := models.GetStaffTotal(maps)
 
 	c.JSON(http.StatusOK, gin.H{
-		"code": err.SUCCESS,
-		"msg":  err.GetMsg(err.SUCCESS),
-		"data": data,
+		"code":  err.LIST_SUCCESS,
+		"msg":   err.GetMsg(err.SUCCESS),
+		"data":  lists,
+		"count": total,
 	})
 }
 
@@ -52,4 +57,53 @@ func EditStaffs(c *gin.Context) {
 
 func DeleteStaffs(c *gin.Context) {
 
+}
+
+// 接受上传图片接口
+func UploadHeader(c *gin.Context) {
+	file, erro := c.FormFile("file")
+	fileName := file.Filename + "-" + com.ToStr(time.Now().Unix())
+	if erro == nil {
+		dst := path.Join("./static/upload/header", fileName)
+		saveErr := c.SaveUploadedFile(file, dst)
+		if saveErr == nil {
+			log.Println("success save file to", dst)
+			outDst := dst[7:]
+			c.JSON(http.StatusOK, gin.H{
+				"code": err.LIST_SUCCESS,
+				"msg":  "",
+				"data": outDst,
+			})
+			return
+		}
+	}
+	c.JSON(http.StatusBadRequest, gin.H{
+		"code": err.ERROR,
+		"msg":  "",
+		"data": "",
+	})
+}
+
+func UploadCertificate(c *gin.Context) {
+	file, erro := c.FormFile("file")
+	fileName := file.Filename + "-" + com.ToStr(time.Now().Unix())
+	if erro == nil {
+		dst := path.Join("./static/upload/certificate", fileName)
+		saveErr := c.SaveUploadedFile(file, dst)
+		if saveErr == nil {
+			log.Println("success save file to", dst)
+			outDst := dst[7:]
+			c.JSON(http.StatusOK, gin.H{
+				"code": err.LIST_SUCCESS,
+				"msg":  "",
+				"data": outDst,
+			})
+			return
+		}
+	}
+	c.JSON(http.StatusBadRequest, gin.H{
+		"code": err.ERROR,
+		"msg":  "",
+		"data": "",
+	})
 }
