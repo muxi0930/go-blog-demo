@@ -50,6 +50,9 @@
 
 			//欢迎信息
 			layer.msg('Hello World');
+			// // 检查token存在
+			token = layui.sessionData('auth').token 
+            if (token == undefined){ window.location.href = '/web/login.html'; }
 		});
 		layui.use('table', function () {
 			var $ = layui.$
@@ -57,6 +60,9 @@
 			table.render({
 				elem: '#user_table'
 				, url: '/api/v1/staffs'
+				, headers: {
+					'Token': layui.sessionData('auth').token
+				}
 				, page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
 					layout: ['count', 'prev', 'page', 'next', 'skip'] //自定义分页布局 'limit'
 					//,curr: 5 //设定初始在第 5 页
@@ -87,7 +93,7 @@
 					obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
 				} else if (obj.event === 'del') {
 					layer.confirm('真的要删除吗？', function (index) {
-						axios.delete('/api/v1/staff/' + data.ID)
+						axios.delete('/api/v1/staff/' + data.ID, { headers: { 'Token': layui.sessionData('auth').token } })
 							.then(function (response) {
 								if (response.data.code == 200) {
 									layer.msg('删除成功', { time: 1000 }, function () {

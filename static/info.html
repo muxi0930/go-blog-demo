@@ -11,7 +11,7 @@
 
 <body>
 
-    
+
     <!-- <table class="layui-hide" id="user_table" , lay-filter="table_lay_filter"></table> -->
 
     <form class="layui-form" action="" style="padding-right: 20px;">
@@ -71,7 +71,7 @@
                     }
                 }
             }
-            axios.get('/api/v1/staffs?id=' + params.id)
+            axios.get('/api/v1/staffs?id=' + params.id,  { headers: { 'Token': layui.sessionData('auth').token } })
                 .then(function (response) {
                     console.log(response);
                     if (response.data.count > 0) {

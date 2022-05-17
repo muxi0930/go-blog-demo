@@ -3,6 +3,7 @@ module go-blog-demo
 go 1.17
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-ini/ini v1.66.3
 	github.com/unknwon/com v1.0.1

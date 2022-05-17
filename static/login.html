@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <script src="layui/axios.min.js"></script>
+</head>
+
+
+<body>
+    <form class="layui-form" action="" style="padding-right: 70px; margin-top: 50px;">
+        <div class="layui-form-item">
+            <label class="layui-form-label">账户</label>
+            <div class="layui-input-block">
+                <input type="text" name="username" required lay-verify="required" placeholder="请输入账户" autocomplete="off"
+                    class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">密码</label>
+            <div class="layui-input-inline">
+                <input type="password" name="password" required lay-verify="pass" placeholder="请输入密码" autocomplete="off"
+                    class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="form_user" , id="commit_btn">登录</button>
+                <button type="reset" class="layui-btn layui-btn-primary" , id="reset_btn">重置</button>
+            </div>
+        </div>
+    </form>
+
+
+    <script src="layui/layui.js"></script>
+    <script>
+        var $ = layui.$
+        var image_path = '';
+        var certificate_path = '';
+        layui.use(function () {
+            var layer = layui.layer
+                , form = layui.form
+                , laypage = layui.laypage
+                , element = layui.element
+                , laydate = layui.laydate
+                , util = layui.util
+                , upload = layui.upload;
+            // 登录
+            form.on('submit(form_user)', function (data) {
+                axios.post('/login', data.field)
+                    .then(function (response) {
+                        if (response.data.code == 200) {
+                            layer.msg('登录成功', { time: 1500 }, function () {
+                                layui.sessionData('auth', {
+                                    key: 'token'
+                                    , value: response.data.data.token
+                                })
+                                window.location.href = '/web/index.html';
+                            });
+                        } else {
+                            layer.msg('登录失败');
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+                return false;
+            });
+
+        });
+    </script>
+</body>

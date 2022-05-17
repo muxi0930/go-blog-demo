@@ -90,7 +90,7 @@
                     }
                 }
             }
-            axios.get('/api/v1/staffs?id=' + params.id)
+            axios.get('/api/v1/staffs?id=' + params.id,  { headers: { 'Token': layui.sessionData('auth').token } })
                 .then(function (response) {
                     console.log(response);
                     if (response.data.count > 0) {
@@ -125,9 +125,8 @@
                 _field['avatar'] = image_path;
                 _field['certificate'] = certificate_path;
                 console.log(_field)
-                axios.put('/api/v1/staff/' + params.id, data.field)
+                axios.put('/api/v1/staff/' + params.id, data.field, { headers: { 'Token': layui.sessionData('auth').token } })
                     .then(function (response) {
-                        // console.log(response);
                         if (response.data.code == 200) {
                             layer.msg('修改成功', { time: 1500 }, function () {
                                 window.parent.location.reload();
@@ -150,9 +149,12 @@
                 , url: '/api/v1/upload_header'
                 , accept: 'images'
                 , size: 10240
+                , headers: {
+                    'Token': layui.sessionData('auth').token
+                }
                 , before: function (obj) {
                     obj.preview(function (index, file, result) {
-                        $('#avatar_img').attr('src', result); 
+                        $('#avatar_img').attr('src', result);
                     });
                 }
                 , done: function (res) {
@@ -171,6 +173,9 @@
                 , accept: 'file'
                 , acceptMime: 'file/doc,file/docx,file/pdf'
                 , size: 10240
+                , headers: {
+                    'Token': layui.sessionData('auth').token
+                }
                 , before: function (obj) {
                 }
                 , done: function (res) {
@@ -190,8 +195,6 @@
                 var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
                 parent.layer.close(index);
             });
-
-
         });
     </script>
 </body>

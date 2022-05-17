@@ -1,9 +1,9 @@
 package routers
 
 import (
+	"go-blog-demo/pkg/middleware"
 	"go-blog-demo/pkg/setting"
 	v1 "go-blog-demo/routers/api/v1"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,15 +15,17 @@ func InitRouter() *gin.Engine {
 
 	gin.SetMode(setting.RunMode)
 
-	r.StaticFS("/files", http.Dir("."))
+	// r.StaticFS("/files", http.Dir("."))
 	r.Static("/web", "./static")
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{"message": "pong"})
 	})
+	r.POST("/login", v1.Login)
 
 	apiv1 := r.Group("/api/v1")
 	{
+		apiv1.Use(middleware.JWT())
 		apiv1.GET("/staffs", v1.GetStaffs)
 		apiv1.POST("/staff", v1.AddStaff)
 		apiv1.PUT("/staff/:id", v1.EditStaffs)

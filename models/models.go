@@ -47,5 +47,6 @@ func init() {
     sqlDB.SetMaxIdleConns(10)
     sqlDB.SetMaxOpenConns(100)
     db.AutoMigrate(&Staff{})
+    db.AutoMigrate(&Auth{})
 
 }

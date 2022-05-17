@@ -87,7 +87,7 @@
                 _field['avatar'] = image_path;
                 _field['certificate'] = certificate_path;
                 console.log(_field)
-                axios.post('/api/v1/staff', data.field)
+                axios.post('/api/v1/staff', data.field, {headers: {'Token': layui.sessionData('auth').token}})
                     .then(function (response) {
                         // console.log(response);
                         if (response.data.code == 200) {
@@ -112,6 +112,9 @@
                 , url: '/api/v1/upload_header'
                 , accept: 'images'
                 , size: 10240
+                , headers: {
+					'Token': layui.sessionData('auth').token
+				}
                 , before: function (obj) {
                     obj.preview(function (index, file, result) {
                         $('#demo1').attr('src', result); //图片链接（base64）
@@ -133,6 +136,9 @@
                 , accept: 'file'
                 , acceptMime: 'file/doc,file/docx,file/pdf'
                 , size: 10240
+                , headers: {
+					'Token': layui.sessionData('auth').token
+				}
                 , before: function (obj) {
                 }
                 , done: function (res) {
